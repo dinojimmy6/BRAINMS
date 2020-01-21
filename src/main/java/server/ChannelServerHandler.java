@@ -58,7 +58,7 @@ public class ChannelServerHandler extends IoHandlerAdapter {
         }
         ClientSocket<GameClient> cs = (ClientSocket) session.getAttribute(ClientSocket.KEY);
         int opcode = lea.readShort();
-        Logging.log("[Recv] (" + HexTool.getOpcodeToString(opcode) + ") " + lea.toString());
+        //Logging.log("[Recv] (" + HexTool.getOpcodeToString(opcode) + ") " + lea.toString());
         try {
             cs.client.handlePacket(RecvPacketOpcode.getName(opcode), lea);
         }
@@ -77,6 +77,6 @@ public class ChannelServerHandler extends IoHandlerAdapter {
         byte[] hex = HexTool.getByteArrayFromHexString(bytes);
         String hexString = new String(hex, "ASCII");
 
-        Logging.log("[Sent] " + code + ": " + bytes);
+        //Logging.log("[Sent] " + code + ": " + bytes);
     }
 }

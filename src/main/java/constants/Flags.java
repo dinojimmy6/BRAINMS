@@ -52,7 +52,56 @@ public class Flags {
         }
 
         public static long defaultMask() {
-            return CHARSTATS.flag | ITEMSLOTEQUIP.flag;
+            return CHARSTATS.flag | ITEMSLOTEQUIP.flag | MESO.flag | QUESTEX.flag;
+        }
+    }
+
+    public enum Stat {
+        SKIN(0x1), // byte
+        FACE(0x2), // int
+        HAIR(0x4), // int
+        LEVEL(0x10), // byte
+        JOB(0x20), // short
+        STR(0x40), // short
+        DEX(0x80), // short
+        INT(0x100), // short
+        LUK(0x200), // short
+        HP(0x400), // int
+        MAXHP(0x800), // int
+        MP(0x1000), // int
+        MAXMP(0x2000), // int
+        AVAILABLEAP(0x4000), // short
+        AVAILABLESP(0x8000), // short (depends)
+        EXP(0x10000), // int
+        FAME(0x20000), // int
+        MESO(0x40000), // int
+        PET(0x180008), // Pets: 0x8 + 0x80000 + 0x100000  [3 longs]
+        FATIGUE(0x80000), // byte
+        CHARISMA(0x100000), // ambition int
+        INSIGHT(0x200000),
+        WILL(0x400000), // int
+        CRAFT(0x800000), // dilligence, int
+        SENSE(0x1000000), // empathy, int
+        CHARM(0x2000000), // int
+        TRAIT_LIMIT(0x20000000), // 12 bytes
+        VIRTUE(0x400000000L);
+        private final long i;
+
+        private Stat(long i) {
+            this.i = i;
+        }
+
+        public long getValue() {
+            return i;
+        }
+
+        public static Stat getByValue(final long value) {
+            for (final Stat stat : Stat.values()) {
+                if (stat.i == value) {
+                    return stat;
+                }
+            }
+            return null;
         }
     }
 }

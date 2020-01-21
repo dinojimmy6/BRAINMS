@@ -143,7 +143,10 @@ public class LoginClient {
             ResultSet rs = ps.executeQuery();
             List<MapleCharacter> chrList = new LinkedList<>();
             while(rs.next()) {
-                chrList.add(new MapleCharacter(rs.getInt("id")));
+                MapleCharacter chr = MapleCharacter.buildMapleCharacter(rs.getInt("id"));
+                if(chr != null) {
+                    chrList.add(chr);
+                }
             }
             ps.close();
             rs.close();
@@ -156,8 +159,10 @@ public class LoginClient {
 
     public void handleNewCharCreation(LittleEndianAccessor lea) {
         if(state == LoginState.SELECT) {
-            MapleCharacter chr = new MapleCharacter(lea, accId);
-            session.write(LoginPacket.writeNewCharEntry(chr));
+            MapleCharacter chr = MapleCharacter.buildMapleCharacter(lea, accId);
+            if(chr != null) {
+                session.write(LoginPacket.writeNewCharEntry(chr));
+            }
         }
     }
 

@@ -2,14 +2,13 @@ package server;
 
 import constants.ServerConfig;
 
-import java.awt.*;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Map;
 
-import game.skill.Skill;
+import game.item.ItemFactory;
 import game.skill.SkillFactory;
+import game.skill.SkillManager;
 import utils.DatabaseConnection;
 import utils.Logging;
 
@@ -42,6 +41,8 @@ public class InitServer {
         LoginServer.run_startup_configurations();
         ChannelServer.run_startup_configurations();
         SkillFactory.loadAllSkills();
+        SkillManager.load();
+        ItemFactory.loadAllEquips();
         long now = System.currentTimeMillis() - start;
         long seconds = now / 1000;
         long ms = now % 1000;

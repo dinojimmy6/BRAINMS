@@ -7,8 +7,9 @@ import org.apache.mina.core.session.IoSession;
 import java.awt.Point;
 
 public abstract class MapObject {
-    protected int oid;
-    protected final Point position = new Point();
+    public int oid;
+    public MapleMap map;
+    public final Point position = new Point();
 
     public void setPosition(int x, int y) {
        position.x = x;

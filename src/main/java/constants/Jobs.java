@@ -98,6 +98,13 @@ public class Jobs {
 
     public enum Job {
         BEGINNER(0, 0),
+        Warrior(100, 1),
+        Fighter(110, 2),
+        Crusader(111, 3),
+        Hero(112, 4),
+        Page(120, 2),
+        WhiteKnight(121, 3),
+        Paladin(122, 4),
         MAGICIAN(200, 1),
         ILWIZARD(220, 2),
         ILMAGE(221, 3),
@@ -129,6 +136,10 @@ public class Jobs {
                 }
             }
             return null;
+        }
+
+        public static boolean isMage(int job) {
+            return (job >= 200 && job <= 232) || (job >= 1200 && job <= 1212) || (job >= 2200 && job <= 2218) || (job >= 3200 && job <= 3212);
         }
     }
 }

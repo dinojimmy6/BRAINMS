@@ -1,6 +1,7 @@
 package server;
 
 import encryption.CodecFactory;
+import game.Timer;
 import game.character.MapleCharacter;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.buffer.SimpleBufferAllocator;
@@ -19,6 +20,8 @@ public class ChannelServer {
     private static SocketAcceptor acceptor;
     public static Map<Integer, MapleCharacter> characters = new HashMap<>();
     public static ChannelProcessor[] processors;
+    public static Timer[] timers;
+
     public static final void run_startup_configurations() {
         IoBuffer.setUseDirectBuffer(false);
         IoBuffer.setAllocator(new SimpleBufferAllocator());
@@ -35,7 +38,10 @@ public class ChannelServer {
             Logging.exceptionLog("Could not bind to port 8585: " + e);
         }
         processors = new ChannelProcessor[1];
+        timers = new Timer[1];
         processors[0] = new ChannelProcessor(0);
+        timers[0] = new Timer();
+        timers[0].start();
         Thread t = new Thread(processors[0]);
         t.start();
     }

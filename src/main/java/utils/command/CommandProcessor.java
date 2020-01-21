@@ -13,6 +13,8 @@ public class CommandProcessor {
 
     static {
         commands.put("@spawn", new GMCommand.Spawn());
+        commands.put("@job", new GMCommand.Job());
+        commands.put("@getsp", new GMCommand.GetSp());
     }
 
     public static boolean processCommand(MapleCharacter chr, MapleMap map, String line) {

@@ -1,15 +1,23 @@
 package game;
 
+import constants.Skill;
 import game.character.MapleCharacter;
-import game.handlers.PacketHandler;
+import game.skill.AttackInfo;
+import game.skill.Paladin;
+import game.skill.SkillFactory;
 import org.apache.mina.core.session.IoSession;
+import packet.CWvsContext;
 import packet.LoginPacket;
 import packet.RecvPacketOpcode;
 import packet.SendPacketOpcode;
 import server.ChannelServer;
 import server.LoginServer;
 import utils.data.LittleEndianAccessor;
+import constants.Jobs.Job;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 
 public class GameClient {
@@ -34,7 +42,11 @@ public class GameClient {
             //do change channel
         }
         else {
-            chr = new MapleCharacter(charId, session);
+            chr = MapleCharacter.buildMapleCharacter(charId, session);
+            if(chr == null) {
+                session.closeNow();
+                return;
+            }
             try {
                 ChannelServer.processors[channel].queue.put(chr);
             }
@@ -50,9 +62,10 @@ public class GameClient {
             case AUTH_REQUEST:
                 session.write(LoginPacket.sendAuthResponse(SendPacketOpcode.AUTH_RESPONSE.getValue() ^ lea.readInt()));
                 break;
-            case ON_ATTACK: {
+            case ON_MELEE_ATTACK: {
+                AttackInfo ai = new AttackInfo(lea, chr);
                 ChannelServer.processors[channel].queue.put((Runnable) () -> {
-                    ChannelServer.processors[channel].handleAttack(chr);
+                    ChannelServer.processors[channel].handleMeleeAttack(chr, ai);
                 });
                 break;
             }
@@ -64,10 +77,47 @@ public class GameClient {
                 });
                 break;
             }
+            case DISTRIBUTE_SP: {
+                lea.skip(4); //update tick
+                int skillId = lea.readInt();
+                int amount = lea.readInt();
+                if(amount <= 0) {
+                    //ban
+                    return;
+                }
+                ChannelServer.processors[channel].queue.put((Runnable) () -> {
+                    ChannelServer.processors[channel].handleDistributeSp(chr, skillId, amount);
+                });
+                break;
+            }
+            case MOVE_PLAYER: {
+                ChannelServer.processors[channel].queue.put((Runnable) () -> {
+                    ChannelServer.processors[channel].handleMovePlayer(lea, chr);
+                });
+                break;
+            }
+            case SPECIAL_MOVE: {
+                lea.skip(4);
+                int skillId = lea.readInt();
+                int slv = lea.readByte();
+                ChannelServer.processors[channel].queue.put((Runnable) () -> {
+                    ChannelServer.processors[channel].handleSpecialMove(lea, chr, skillId, slv);
+                });
+                break;
+            }
+            case MOVE_LIFE: {
+                ChannelServer.processors[channel].queue.put((Runnable) () -> {
+                    ChannelServer.processors[channel].handleMoveLife(lea, chr);
+                });
+            }
         }
     }
 
-    public void disconnect() {
-        LoginServer.logins.remove(chr.accountId);
+    public void disconnect() throws InterruptedException {
+        LoginServer.logins.remove(chr.getAccountId());
+        ChannelServer.processors[channel].queue.put((Runnable) () -> {
+            chr.save();
+            chr.getMap().onCharLeaveMap(chr);
+        });
     }
 }

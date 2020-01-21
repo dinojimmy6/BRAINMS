@@ -22,10 +22,13 @@ public enum RecvPacketOpcode {
     AUTH_SERVER(0xAB),
     BUTTON_PRESS(0x24B),
     //Game
+    MOVE_PLAYER(0xBE),
     CHAR_LOGIN(0x6E),
-    ON_ATTACK(0xC3),
+    ON_MELEE_ATTACK(0xC3),
     GENERAL_CHAT(0xCB),
-
+    DISTRIBUTE_SP(0x130),
+    SPECIAL_MOVE(0x131),
+    MOVE_LIFE(0x339),
     UNHANDLED(0x9999);
 
     private short value;

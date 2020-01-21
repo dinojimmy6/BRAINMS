@@ -52,7 +52,7 @@ public class CStage {
 
             pw.writeInt(mapId);
             pw.write(spawnPoint);
-            pw.writeInt(mc.stats.hp);
+            pw.writeInt(mc.stats.getLast().hp);
 
             // (bool (int + int))
             pw.write(0);
@@ -191,7 +191,7 @@ public class CStage {
         }
 
         if(CharFlags.checkMask(mask, CharFlags.SKILL)) {
-            //addSkillInfo(pw, chr);
+            chr.cSkills.writeSkillInfo(pw);
         }
 
         if(CharFlags.checkMask(mask, CharFlags.COOLDOWN)) {
@@ -225,6 +225,7 @@ public class CStage {
         }
 
         if(CharFlags.checkMask(mask, CharFlags.QUESTEX)) {
+            pw.writeShort(0);
         }
 
         if(CharFlags.checkMask(mask, CharFlags.AVATAR)) {
@@ -254,10 +255,10 @@ public class CStage {
         if(CharFlags.checkMask(mask, CharFlags.HONOR)) {
         }
 
-        if(CharFlags.checkMask(mask, CharFlags.MESO)) {
-            pw.write(1);
-            pw.writeShort(0);
-        }
+//        if(CharFlags.checkMask(mask, CharFlags.MESO)) {
+//            pw.write(1);
+//            pw.writeShort(0);
+//        }
 
         if(CharFlags.checkMask(mask, CharFlags.ANGELICBUSTER)) {
             pw.writeInt(21173); //face
